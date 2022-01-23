@@ -29,7 +29,7 @@ function snapshot() {
         .then(function (bitmap) {
             canvas.width = bitmap.width;
             canvas.height = bitmap.height;
-            canvas.getContext('2d').drawImage(imageBitmap, 0, 0);
+            canvas.getContext('2d').drawImage(bitmap, 0, 0);
             const imgData = canvas.getContext('2d').getImageData();
             console.log(imgData);
         })
