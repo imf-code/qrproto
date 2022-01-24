@@ -2,6 +2,7 @@
 const canvas = document.querySelector('canvas');
 const button = document.querySelector('button');
 const video = document.querySelector('video');
+const text = document.querySelector('p');
 
 // Bind controls
 button.onclick = readQR;
@@ -10,10 +11,12 @@ button.onclick = readQR;
 const ctx = canvas.getContext('2d');
 let stream;
 
-// Setup <video> preview of camera feed (not actually necessary)
+// Gain access to camera on device + setup <video> preview of camera feed (latter not actually necessary)
 const constraints = window.constraints = {
     audio: false,
-    video: true
+    video: {
+        facingMode: "environment" // Force back camera on phone
+    }
 }
 navigator.mediaDevices.getUserMedia(constraints)
     .then(function (mediaStream) {
@@ -42,7 +45,7 @@ function readLoop(capturedTrack) {
             // Draw a frame on canvas + aiming rectangle
             canvas.width = bitmap.width;
             canvas.height = bitmap.height;
-            
+
             const rectX = (bitmap.width - 400) / 2;
             const rectY = (bitmap.height - 400) / 2;
 
@@ -58,6 +61,7 @@ function readLoop(capturedTrack) {
             // Loop until QR is found
             if (result) {
                 console.log(result.data);
+                text.innerHTML = result.data;
                 return;
             }
             else {
