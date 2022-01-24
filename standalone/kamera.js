@@ -3,9 +3,11 @@ const canvas = document.querySelector('canvas');
 const video = document.querySelector('video');
 const button = document.querySelector('button');
 
-// Init + global var
+// Init
 button.onclick = snapshot;
-canvas.hidden = true;
+
+// Global variables
+const ctx = canvas.getContext('2d');
 let stream;
 
 // Setup preview
@@ -17,6 +19,7 @@ navigator.mediaDevices.getUserMedia(constraints)
     .then(function (mediaStream) {
         stream = window.stream = mediaStream;
         video.srcObject = mediaStream;
+        video.play();
     })
     .catch(err => console.log(err));
 
@@ -27,11 +30,21 @@ function snapshot() {
 
     frame.grabFrame()
         .then(function (bitmap) {
+
             canvas.width = bitmap.width;
             canvas.height = bitmap.height;
+
             canvas.getContext('2d').drawImage(bitmap, 0, 0);
-            const imgData = canvas.getContext('2d').getImageData();
-            console.log(imgData);
+            const imgData = ctx.getImageData(220, 140, 200, 200);
+            const result = jsQr(imgData, 200, 200);
+
+            if (result) {
+                console.log(result.data);
+                return;
+            }
+            else {
+                setTimeout(snapshot, 1000 / 10);
+            }
         })
         .catch(err => console.log(err));
 }
